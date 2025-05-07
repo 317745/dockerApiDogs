@@ -1,0 +1,28 @@
+services:
+  dbdogs:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=123
+      - MYSQL_DATABASE=dogs
+    volumes:
+      - ./DBdogs/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - '3307:3306'
+    deploy: 
+      replicas: 1
+    networks:
+      - mynetwork
+  
+  api: 
+    image: steven462/apidogs:v1
+    depends_on:
+      - dbdogs
+    ports:
+      - '3000:3000'
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: overlay
+    attachable: true
